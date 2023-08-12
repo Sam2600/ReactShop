@@ -1,10 +1,9 @@
-
 import AddPostForm from "./ReduxPractice2/features/posts/AddPostForm";
 import PostList from "./ReduxPractice2/features/posts/PostList";
 import "./index.css";
 
 function App() {
-  return(
+  return (
     <div className="flex flex-col items-center justify-center">
       <AddPostForm />
       <PostList />
@@ -13,6 +12,7 @@ function App() {
 }
 
 export default App;
+
 
 /**
  *  <ContextProvider>
