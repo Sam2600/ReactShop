@@ -1,7 +1,3 @@
-/**
- * Need to check the postPosts's builder.addCase.fulfilled => because action.payload is underfined
- */
-
 import { createAsyncThunk, createSlice, nanoid } from "@reduxjs/toolkit";
 import axios from "axios";
 import { sub } from "date-fns";
@@ -9,7 +5,7 @@ import { sub } from "date-fns";
 
 const initialState = {
   posts: [],
-  status: "idle", // idle -> loading -> success -> failed
+  status: "idle",
   error: null
 }
 
@@ -22,9 +18,40 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
 })
 
 export const postPosts = createAsyncThunk("posts/postPosts", async (initialPost) => {
-  const response = axios.post(POST_URL, initialPost)
-  const data = response.data;
+  const response = await axios.post(POST_URL, initialPost)
+  const data = response.data
   return data;
+})
+
+export const updatePost = createAsyncThunk("posts/updatPost", async (initialPost) => {
+
+  const { id } = initialPost
+
+  let postId = Number(id)
+
+  try {
+    const response = await axios.put(`${POST_URL}/${postId}`, initialPost);
+    const data = response.data;
+    return data;
+  } catch (error) {
+    return initialPost
+  }
+})
+
+export const deletePost = createAsyncThunk("/posts/deletePosts", async (initialPost) => {
+
+  const { id } = initialPost
+
+  let postId = Number(id)
+
+  try {
+    const response = await axios.delete(`${POST_URL}/${postId}`)
+    if (response?.status === 200) return initialPost;
+    return `${response?.status}: ${response?.statusText}`
+
+  } catch (error) {
+    return error.message;
+  }
 })
 
 const postsSlice = createSlice({
@@ -71,6 +98,7 @@ const postsSlice = createSlice({
     },
   },
 
+
   extraReducers: (builder) => {
 
     builder
@@ -95,7 +123,7 @@ const postsSlice = createSlice({
         })
 
         state.posts = state.posts.concat(result);
-      })  
+      })
 
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "Filed";
@@ -103,18 +131,54 @@ const postsSlice = createSlice({
       })
 
       .addCase(postPosts.fulfilled, (state, action) => {
-        const payload = action.meta.arg;
-        
-        payload.userId = Number(payload.userId);
-        payload.date = new Date().toISOString();
-        payload.reactions = {
+
+        const sortedPosts = state.posts.sort((a, b) => {
+          if (a.id > b.id) return 1
+          if (a.id < b.id) return -1
+          return 0
+        })
+
+        action.payload.id = sortedPosts[sortedPosts.length - 1].id + 1;
+
+        action.payload.userId = Number(action.payload.userId)
+        action.payload.date = new Date().toISOString();
+        action.payload.reactions = {
           thumbsUp: 0,
           wow: 0,
           heart: 0,
           rocket: 0,
           coffee: 0
         }
-        state.posts.push(payload)
+
+        state.posts.push(action.payload)
+      })
+
+      .addCase(updatePost.fulfilled, (state, action) => {
+
+        if (!action.payload?.id) {
+          console.log("Updating process failed")
+          return;
+        }
+
+        const { id } = action.payload;
+        let numId = Number(id) // Changinh String id to real integer id
+        action.payload.date = new Date().toISOString();
+        const posts = state.posts.filter(post => post.id !== numId)
+        state.posts = [...posts, action.payload]
+      })
+
+      .addCase(deletePost.fulfilled, (state, action) => {
+
+        if (!action.payload?.id) {
+          console.log("Deleting process failed")
+          return;
+        }
+
+        const { id } = action.payload;
+        action.payload.date = new Date().toISOString();
+        const posts = state.posts.filter(post => post.id !== id)
+        state.posts = posts
+
       })
   }
 });
@@ -127,3 +191,4 @@ export const error = (state) => state.posts.error;
 export const { postAdded, reactionButtonClicked } = postsSlice.actions;
 
 export default postsSlice.reducer;
+

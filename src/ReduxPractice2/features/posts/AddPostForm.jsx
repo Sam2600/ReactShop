@@ -1,9 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { nanoid } from "@reduxjs/toolkit";
 import { selectAllUsers } from "../users/usersSlice"
 import { postPosts } from "../posts/postsSlice"
-import { id } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
 
 const AddPostForm = () => {
@@ -15,7 +13,6 @@ const AddPostForm = () => {
   const dispatch = useDispatch();
 
   const [post, setPost] = useState({
-    id: nanoid(),
     title: "",
     content: "",
     authorID: "",
@@ -48,21 +45,25 @@ const AddPostForm = () => {
 
   const handleSubmit = () => {
 
+    let title = post.title;
+    let userId = post.authorID;
+
     if (canSubmit) {
 
       try {
         setStatus("pending");
-        dispatch(postPosts({ title: post.title, body: post.content, userId: post.authorID }))
+        dispatch(postPosts({ title, body: post.content, userId })).unwrap();
         setPost({
           ...post,
           title: "",
           content: "",
+          authorID: "",
         })
 
         navigate("/")
 
       } catch (error) {
-        console.log(error)
+        console.error("Failed to post", error)
       } finally {
         setStatus("idle")
       }

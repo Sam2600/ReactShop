@@ -16,7 +16,7 @@ const PostExerpt = ({ propPost }) => {
             </div> <hr />
             <div className='flex justify-between items-center'>
                 <ReactionButtons post={propPost} />
-                <Link className="underline mt-3" to={`post/${propPost.id}`}>View Post</Link>
+                <Link className="underline mt-3" to={`posts/${propPost.id}`}>View Post</Link>
             </div>
         </article>
     )

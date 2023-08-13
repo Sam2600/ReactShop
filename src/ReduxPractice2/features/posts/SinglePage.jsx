@@ -8,15 +8,18 @@ import { Link, useParams } from 'react-router-dom';
 
 const SinglePage = () => {
 
-     const {id} = useParams();
+     const { id } = useParams();
+     let numId = Number(id);
 
-     const post = useSelector((state) => singlePost(state, Number(id)));
+     const post = useSelector((state) => singlePost(state, numId));
 
+     console.log(post)
+     
      if (!post) {
           return (
-               <section>
-                    <h2>Page not found</h2>
-               </section>
+               <div className='text-center my-20 text-3xl p-5 border w-6/12 rounded-md m-auto shadow-md'>
+                    <h1>Sorry. There is no Page for this process</h1>
+               </div>
           )
      }
 
@@ -29,8 +32,8 @@ const SinglePage = () => {
                     <AddedAgo date={post.date} />
                </div> <hr />
                <div className='flex justify-between items-center'>
-               <ReactionButtons post={post} />
-               <Link className='underline' to="/">To Home Page</Link>
+                    <ReactionButtons post={post} />
+                    <Link className='underline' to={`/posts/${post.id}/edit`}>Edit Post</Link>
                </div>
           </article>
      )
