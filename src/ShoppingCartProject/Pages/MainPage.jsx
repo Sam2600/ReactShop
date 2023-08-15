@@ -1,49 +1,29 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useSelector } from "react-redux";
+import {
+  currentStatus,
+  error,
+  selectAllProducts,
+} from "../Redux/features/ProductSlice";
 import ProductCard from "../components/ProductCard";
-import { ContextUse } from "../Context/contextProvider";
 
 const MainPage = () => {
-  const [products, setProducts] = useState([]);
+  const errors = useSelector(error);
+  const products = useSelector(selectAllProducts);
+  const status = useSelector(currentStatus);
 
-  const { initialState, dispatch } = ContextUse();
+  let content;
 
-  useEffect(() => {
-    axios
-      .get("https://fakestoreapi.com/products")
-
-      .then((res) => {
-        setProducts(res.data);
-      })
-      .catch((error) => console.log(error));
-  }, []);
-
-
-  const handleClick = (res) => {
-    dispatch({
-      type: "ADD_TO_CART",
-      payload: {
-        count: 1,
-        added: true,
-        product: res,
-      },
+  if (status === "loading") {
+    content = <div>Loading...</div>;
+  } else if (status === "succeed") {
+    content = products.map((product) => {
+      return <ProductCard key={product.id} {...product} />;
     });
-  };
+  } else if (status === "failed") {
+    content = <div>{errors}</div>;
+  }
 
-  return (
-    <div className="flex flex-wrap justify-center my-10">
-      {products.map((res) => {
-        return (
-          <ProductCard
-            key={res.id}
-            onclick={() => handleClick(res)}
-            value={initialState.added}
-            {...res}
-          />
-        );
-      })}
-    </div>
-  );
+  return <div className="flex flex-wrap justify-center my-10">{content}</div>;
 };
 
 export default MainPage;

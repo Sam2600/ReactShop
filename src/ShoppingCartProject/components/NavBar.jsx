@@ -1,11 +1,11 @@
-import React from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { ContextUse } from "../Context/contextProvider";
+import { selectedCartProducts } from "../Redux/features/ProductSlice";
+import { useSelector } from "react-redux";
 
 const NavBar = () => {
 
-  const {count} = ContextUse();
+  const cartItems = useSelector(selectedCartProducts)
 
   return (
     <div>
@@ -16,8 +16,7 @@ const NavBar = () => {
         <div>
           <Link to="/cart" className="flex space-x-3 items-center">
             <span>Cart</span>
-            <FaShoppingCart />
-            {count !== 0 &&  <span>{count}</span>}
+            <FaShoppingCart /> <span className={`${cartItems.length === 0 && "invisible "} -z-30 border-none relative right-5 -top-3 w-6 text-sm text-center text-white bg-red-500 rounded-full`}>{cartItems.length}</span>
           </Link>
         </div>
       </nav>
