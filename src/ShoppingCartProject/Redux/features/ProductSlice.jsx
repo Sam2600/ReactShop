@@ -6,6 +6,7 @@ const initialState = {
   error: null,
   products: [],
   cartItems: [],
+  productByID: null,
 };
 
 const PRODUCT_URL = "https://fakestoreapi.com/products";
@@ -14,6 +15,14 @@ export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async () => {
     const response = await axios.get(PRODUCT_URL);
+    return response.data;
+  }
+);
+
+export const fetchProductByID = createAsyncThunk(
+  "products/fetchProductByID",
+  async (id) => {
+    const response = await axios.get(`${PRODUCT_URL}/${id}`);
     return response.data;
   }
 );
@@ -51,20 +60,19 @@ const ProductSlice = createSlice({
 
     // Add the amount of selected product
     addCountCartItems(state, action) {
-
-      const addAmountProduct = state.cartItems.find( product => product.id === action.payload);
+      const addAmountProduct = state.cartItems.find(
+        (product) => product.id === action.payload
+      );
       addAmountProduct.count += 1;
-      addAmountProduct.totalAmount = addAmountProduct.price * addAmountProduct.count
-
+      addAmountProduct.totalAmount =
+        addAmountProduct.price * addAmountProduct.count;
     },
 
     // Reduce the amount of selected products
     reduceCountCartItems(state, action) {
-
       const item = state.cartItems.find(
         // First find the excat object to modify
         (product) => product.id === action.payload
-
       );
 
       item.count -= 1; // reduce the count
@@ -105,6 +113,20 @@ const ProductSlice = createSlice({
       .addCase(fetchProducts.rejected, (state, action) => {
         state.currentStatus = "failed";
         state.error = "There is an error";
+      })
+
+      .addCase(fetchProductByID.pending, (state, action) => {
+        state.currentStatus = "loading";
+      })
+
+      .addCase(fetchProductByID.fulfilled, (state, action) => {
+        state.currentStatus = "succeed";
+        state.productByID = action.payload;
+      })
+
+      .addCase(fetchProductByID.rejected, (state, action) => {
+        state.currentStatus = "failed";
+        state.error = "There is an error";
       });
   },
 });
@@ -112,8 +134,13 @@ const ProductSlice = createSlice({
 export const currentStatus = (state) => state.product.currentStatus;
 export const error = (state) => state.product.error;
 export const selectAllProducts = (state) => state.product.products;
+export const productByID = (state) => state.product.productByID;
 export const selectedCartProducts = (state) => state.product.cartItems;
 
 export default ProductSlice.reducer;
-export const { addedToCart, removeFromCart, reduceCountCartItems, addCountCartItems } =
-  ProductSlice.actions;
+export const {
+  addedToCart,
+  removeFromCart,
+  reduceCountCartItems,
+  addCountCartItems,
+} = ProductSlice.actions;

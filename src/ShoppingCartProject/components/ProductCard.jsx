@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { AiOutlineShoppingCart } from "react-icons/ai";
-import { addedToCart } from "../Redux/features/ProductSlice";
+import { addedToCart, fetchProductByID } from "../Redux/features/ProductSlice";
 import { useDispatch } from "react-redux";
 
 const ProductCard = ({ id, title, price, image, isAdded }) => {
@@ -10,27 +10,44 @@ const ProductCard = ({ id, title, price, image, isAdded }) => {
     dispatch(addedToCart(id));
   };
 
+  const handleViewDetail = (id) => {
+    localStorage.setItem("ITEM_DETAIL_ID", id);
+    dispatch(fetchProductByID(id));
+  };
+
   return (
-    <div className=" flex flex-col rounded-md gap-3 p-5 mx-10 my-10 w-72 border shadow-lg transition-all duration-300 hover:scale-105">
-      <img
-        className=" h-[100px] self-center object-contain"
-        src={image}
-        alt={title}
-      />
+    <div className="card py-5 border w-72 shadow-xl">
+      <figure>
+        <img
+          className=" h-[100px] self-center object-contain"
+          src={image}
+          alt={title}
+        />
+      </figure>
 
-      <h3 className="truncate">{title}</h3>
+      <div className="card-body justify-evenly">
+        <div className="flex flex-col justify-between ml-4 items-start space-y-7">
+          <h1 className="tooltip" data-tip={title}>
+            {title.length > 20 ? `${title.substring(0, 20)}...` : title}
+          </h1>
+          <p>${price}</p>
+        </div>
 
-      <p>
-        <b>${price}</b>
-      </p>
-
-      <div className="flex justify-between items-center">
-        <Link to={`/detail/${id}`}> View Detail </Link>
-        <div className="bg-slate-200 p-2 w-10 text-center self-center rounded-md">
-          <button className={`hover:cursor-pointer ${isAdded && "text-green-500"}`} onClick={handleClickCart} disabled={isAdded}>
-            <AiOutlineShoppingCart
-              size={18}
-            />
+        <div className="card-actions items-start mt-2 justify-between">
+          <Link to={`/detail/${id}`}>
+            <button
+              onClick={() => handleViewDetail(id)}
+              className="btn btn-link"
+            >
+              View Detail
+            </button>
+          </Link>
+          <button
+            className="btn btn-outline"
+            disabled={isAdded ? true : false}
+            onClick={handleClickCart}
+          >
+            <AiOutlineShoppingCart size={18} />
           </button>
         </div>
       </div>
