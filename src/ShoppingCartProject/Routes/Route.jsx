@@ -3,6 +3,7 @@ import MainPage from "../Pages/MainPage";
 import Invoice from "../Pages/Invoice";
 import Detail from "../Pages/Detail";
 import ParentPage from "../Layout/ParentPage";
+import { Login } from "../Pages/Login";
 
 const routes = createBrowserRouter([
   {
@@ -25,7 +26,14 @@ const routes = createBrowserRouter([
       },
     ],
   },
-
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Login />,
+  },
   {
     path: "*",
     element: (

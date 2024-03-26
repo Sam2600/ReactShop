@@ -42,13 +42,19 @@ const ProductCard = ({ id, title, price, image, isAdded }) => {
               View Detail
             </button>
           </Link>
-          <button
-            className="btn btn-outline"
-            disabled={isAdded ? true : false}
-            onClick={handleClickCart}
-          >
-            <AiOutlineShoppingCart size={18} />
-          </button>
+          {isAdded ? (
+            <button
+              className="btn btn-success text-white cursor-default"
+              disabled
+              onClick={handleClickCart}
+            >
+              <AiOutlineShoppingCart size={20} />
+            </button>
+          ) : (
+            <button className="btn btn-outline" onClick={handleClickCart}>
+              <AiOutlineShoppingCart size={20} />
+            </button>
+          )}
         </div>
       </div>
     </div>

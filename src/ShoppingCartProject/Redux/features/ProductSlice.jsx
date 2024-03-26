@@ -7,6 +7,7 @@ const initialState = {
   products: [],
   cartItems: [],
   productByID: null,
+  totalProducts: 0,
 };
 
 const PRODUCT_URL = "https://fakestoreapi.com/products";
@@ -33,7 +34,7 @@ const ProductSlice = createSlice({
 
   reducers: {
     // Add the selected products to the cart arry
-    addedToCart(state, action) {
+    addedToCart: (state, action) => {
       const clickedProduct = state.products.find(
         (product) => product.id === action.payload
       );
@@ -43,33 +44,38 @@ const ProductSlice = createSlice({
       clickedProduct.totalAmount = clickedProduct.price * clickedProduct.count;
 
       state.cartItems.push(clickedProduct);
+      state.totalProducts += 1;
     },
 
     // Remove the selected product from the cart
-    removeFromCart(state, action) {
+    removeFromCart: (state, action) => {
       const newItems = state.cartItems.filter(
-        (product) => product.id !== action.payload
+        (product) => product.id !== action.payload?.id
       );
       state.cartItems = newItems;
 
       const removedItem = state.products.find(
-        (product) => product.id === action.payload
+        (product) => product.id === action.payload?.id
       );
       removedItem.isAdded = false;
+
+      state.totalProducts -= action.payload?.count;
     },
 
     // Add the amount of selected product
-    addCountCartItems(state, action) {
+    addCountCartItems: (state, action) => {
       const addAmountProduct = state.cartItems.find(
         (product) => product.id === action.payload
       );
       addAmountProduct.count += 1;
       addAmountProduct.totalAmount =
         addAmountProduct.price * addAmountProduct.count;
+
+      state.totalProducts += 1;
     },
 
     // Reduce the amount of selected products
-    reduceCountCartItems(state, action) {
+    reduceCountCartItems: (state, action) => {
       const item = state.cartItems.find(
         // First find the excat object to modify
         (product) => product.id === action.payload
@@ -93,6 +99,8 @@ const ProductSlice = createSlice({
 
         state.cartItems = newItems; // make new selected cart array;
       }
+
+      state.totalProducts -= 1;
     },
   },
 
@@ -136,11 +144,13 @@ export const error = (state) => state.product.error;
 export const selectAllProducts = (state) => state.product.products;
 export const productByID = (state) => state.product.productByID;
 export const selectedCartProducts = (state) => state.product.cartItems;
+export const totalProducts = (state) => state.product.totalProducts;
 
-export default ProductSlice.reducer;
 export const {
   addedToCart,
   removeFromCart,
   reduceCountCartItems,
   addCountCartItems,
 } = ProductSlice.actions;
+
+export default ProductSlice.reducer;

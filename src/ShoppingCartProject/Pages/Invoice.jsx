@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import {
   selectedCartProducts,
   removeFromCart,
@@ -11,8 +12,8 @@ const Invoice = () => {
 
   const cartProducts = useSelector(selectedCartProducts);
 
-  const handleClickRemove = (id) => {
-    dispatch(removeFromCart(id));
+  const handleClickRemove = (payload) => {
+    dispatch(removeFromCart(payload));
   };
 
   const handleClickReduce = (id) => {
@@ -41,7 +42,9 @@ const Invoice = () => {
 
             <div className="flex justify-start space-x-4 text-center items-center">
               <button
-                onClick={() => handleClickRemove(ini.id)}
+                onClick={() =>
+                  handleClickRemove({ id: ini.id, count: ini.count })
+                }
                 className="text-md text-red-500"
               >
                 Remove
@@ -86,12 +89,18 @@ const Invoice = () => {
           </h1>
         )}
         <div className="mt-5 relative items-end gap-2 flex flex-col">
-          <p>Total Amount: $ <b>{totalPrice}</b></p>
-          <p className="text-gray-400 mb-1">Not including taxes and shipping fees</p>
+          <p>
+            Total Amount: $ <b>{totalPrice.toFixed(2)}</b>
+          </p>
+          <p className="text-gray-400 mb-1">
+            Not including taxes and shipping fees
+          </p>
           <div className="flex">
-            <button className="p-2 w-20 border me-5 border-solid border-slate-900 rounded-lg hover:bg-slate-950 hover:text-white">
-              Back
-            </button>
+            <NavLink to={"/"}>
+              <button className="p-2 w-20 border me-5 border-solid border-slate-900 rounded-lg hover:bg-slate-950 hover:text-white">
+                Back
+              </button>
+            </NavLink>
             <button className="p-2 w-32 border bg-green-400 text-white me-5 border-solid border-white rounded-lg hover:bg-green-500 hover:text-white">
               Checkout
             </button>
