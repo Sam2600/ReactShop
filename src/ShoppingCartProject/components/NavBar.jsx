@@ -21,7 +21,7 @@ const NavBar = () => {
     <div className="navbar shadow-md bg-base-100">
       <div className="flex-1">
         <NavLink className="btn btn-ghost text-xl text-primary" to="/">
-          Estilo Vivo
+          Shoppie
         </NavLink>
       </div>
       <div className="flex gap-4 px-5">
