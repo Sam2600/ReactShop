@@ -4,20 +4,20 @@
         "name" : "Kaung Htet San",
         "email" : "kghtetsan26@gmail.com",
         "isPremium" : false, 
-        "profile" : "/public/butcher.jpg"
+        "profile" : "/butcher.jpg"
     },
     {
         "id" : 2,
         "name" : "Swam Gyii",
         "email" : "swamhtetag69@gmail.com",
         "isPremium" : false,
-        "profile" : "/public/butcher.jpg"
+        "profile" : "/jimmy.jpg"
     },
     {
         "id" : 1,
         "name" : "Cho Theint",
         "email" : "chotheint@gmail.com",
         "isPremium" : false,
-        "profile" : ""
+        "profile" : "/choso.jpg"
     }
 ]
